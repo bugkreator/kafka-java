@@ -3,6 +3,7 @@ package com.rotem;
 import kafka.producer.Partitioner;
 import kafka.utils.VerifiableProperties;
 
+import static java.lang.Math.abs;
 
 public class MyPartitioner implements Partitioner {
 
@@ -29,6 +30,6 @@ public class MyPartitioner implements Partitioner {
 
     @Override
     public int partition(Object key, int numPartitions) {
-        return 1;
+        return abs(key.hashCode()) % numPartitions;
     }
 }
