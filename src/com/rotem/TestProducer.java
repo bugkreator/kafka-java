@@ -5,15 +5,18 @@ import kafka.javaapi.producer.Producer;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.UUID;
+import org.apache.log4j.Logger;
 
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
 public class TestProducer {
 
+    final static Logger logger = Logger.getLogger(TestProducer.class);
+
     private String topic = "";
-    private Producer<Integer, String> producer;
+    private Producer<String, String> producer;
     private int messageCounter = 0;
     private void init() {
         Properties props = new Properties();
@@ -21,7 +24,7 @@ public class TestProducer {
         props.put("serializer.class","kafka.serializer.StringEncoder");
         props.put("request.required.acks", "1");
         ProducerConfig config = new ProducerConfig(props);
-        producer =  new Producer<Integer,String>(config);
+        producer =  new Producer<String,String>(config);
     }
 
     public TestProducer(String Topic)
@@ -33,7 +36,10 @@ public class TestProducer {
     public void send(String Text)
     {
         String message = "Message #" + Integer.toString(messageCounter++) + " : " + (new SimpleDateFormat("YYYY-MM-dd hh:mm:ss.SSS")).format(Calendar.getInstance().getTime()) + " : " + Text;
-        KeyedMessage<Integer, String> data = new KeyedMessage<Integer, String>(topic, message);
+        String key = UUID.randomUUID().toString();
+        //key = null;
+        //logger.info(key);
+        KeyedMessage<String, String> data = new KeyedMessage<String, String>(topic, key, message);
         producer.send(data);
     }
 
